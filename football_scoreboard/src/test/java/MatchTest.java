@@ -3,7 +3,6 @@ import org.example.model.Match;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
@@ -23,8 +22,7 @@ public class MatchTest {
         teams.put(HOMETEAM, ARGENTINA);
         teams.put(AWAYTEAM, AUSTRALIA);
 
-        Match match = new Match(1, utc, teams);
-        Assertions.assertEquals(1, match.getId());
+        Match match = new Match(utc, teams);
         Assertions.assertTrue(match.getHomeTeam().equals(ARGENTINA));
         Assertions.assertTrue(match.getAwayTeam().equals(AUSTRALIA));
         Assertions.assertTrue(match.getHomeTeamScore()==0);
@@ -43,7 +41,7 @@ public class MatchTest {
         teams.put(HOMETEAM, ARGENTINA);
         teams.put(AWAYTEAM, AUSTRALIA);
 
-        Match match = new Match(1, utc, teams);
+        Match match = new Match(utc, teams);
         match.finish();
         Assertions.assertFalse(match.setScore(3,1));
     }
@@ -58,7 +56,7 @@ public class MatchTest {
         teams.put(HOMETEAM, ARGENTINA);
         teams.put(AWAYTEAM, AUSTRALIA);
 
-        Match match = new Match(1, utc, teams);
+        Match match = new Match(utc, teams);
         Assertions.assertTrue(match.setScore(3,1));
         Assertions.assertTrue(match.getHomeTeamScore()==3);
         Assertions.assertTrue(match.getAwayTeamScore()==1);
@@ -73,7 +71,7 @@ public class MatchTest {
         Map<String, String> teams = new HashMap<>();
         teams.put(HOMETEAM, ARGENTINA);
         teams.put(AWAYTEAM, ARGENTINA);
-        Assertions.assertThrows(ScoreBoardException.class, ()-> new Match(1, utc, teams));
+        Assertions.assertThrows(ScoreBoardException.class, ()-> new Match(utc, teams));
     }
 
     /**
@@ -85,6 +83,6 @@ public class MatchTest {
         Map<String, String> teams = new HashMap<>();
         teams.put(HOMETEAM, null);
         teams.put(AWAYTEAM, ARGENTINA);
-        Assertions.assertThrows(ScoreBoardException.class, ()-> new Match(1, utc, teams));
+        Assertions.assertThrows(ScoreBoardException.class, ()-> new Match(utc, teams));
     }
 }
