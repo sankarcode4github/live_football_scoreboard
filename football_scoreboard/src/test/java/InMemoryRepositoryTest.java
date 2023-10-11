@@ -104,6 +104,7 @@ public class InMemoryRepositoryTest {
 
     /**
      * When matches are goal less, start time should decide the order
+     * More recently the match has started, earlier in the order it will show up
      * @throws InterruptedException
      */
     @Test
@@ -135,6 +136,12 @@ public class InMemoryRepositoryTest {
         Assertions.assertTrue(summary.get(2).getHomeTeam().equals(MEXICO));
     }
 
+    /**
+     * When matches have different number of total goal scored, this number will decide the order
+     * More is the number of goals, earlier it will come in the order.
+     * When the goals are same, start time will decide the order
+     * @throws InterruptedException
+     */
     @Test
     public void testSummaryChangesAfterScoreChanges() throws InterruptedException {
         OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC);

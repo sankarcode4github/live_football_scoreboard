@@ -6,11 +6,23 @@ import org.example.model.MatchComparator;
 
 import java.util.*;
 
+/**
+ * This class stores the live scoreboard and the live summary
+ * The key to store each match in the HashMap is the name of the home Team
+ * It also tracks the current away teams who are playing
+ */
 public class InMemoryRepository {
 
     private Map<String, Match> scoreBoard = new HashMap<>(); //Live match score board
     private Set<String> currentAwayTeams = new HashSet<>();
     private TreeSet<Match> summary = new TreeSet<>(new MatchComparator()); //The summary
+
+    /**
+     * Add a new match which has just started
+     * @param homeTeam
+     * @param match
+     * @return
+     */
     public boolean add(String homeTeam, Match match) {
         if(match == null || homeTeam == null) {
             return false;
@@ -27,6 +39,13 @@ public class InMemoryRepository {
         return true;
     }
 
+    /**
+     * Set the new score of an ongoing match after a team scores
+     * @param homeTeam
+     * @param homeScore
+     * @param awayScore
+     * @return
+     */
     public boolean setScore(String homeTeam, int homeScore, int awayScore){
         if(!scoreBoard.containsKey(homeTeam)) {
             return false;
