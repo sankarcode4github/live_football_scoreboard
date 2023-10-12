@@ -2,9 +2,9 @@ package org.example.model;
 
 import java.util.Comparator;
 
-public class MatchComparator implements Comparator<Match> {
+public class MatchComparator implements Comparator<MatchInProgress> {
     @Override
-    public int compare(Match o1, Match o2) {
+    public int compare(MatchInProgress o1, MatchInProgress o2) {
         if(o1.getStartTime().equals(o2.getStartTime()) && o1.getHomeTeam().equals(o2.getHomeTeam()) && o1.getAwayTeam().equals(o2.getAwayTeam())) {
             return 0; //consistent with equals
         }

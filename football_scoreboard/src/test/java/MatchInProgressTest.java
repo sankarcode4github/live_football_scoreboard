@@ -1,5 +1,5 @@
 import org.example.exception.ScoreBoardException;
-import org.example.model.Match;
+import org.example.model.MatchInProgress;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +10,7 @@ import java.util.Map;
 
 import static org.example.model.Constants.*;
 
-public class MatchTest {
+public class MatchInProgressTest {
 
     /**
      * This method tests whether a match can be created properly
@@ -22,13 +22,13 @@ public class MatchTest {
         teams.put(HOMETEAM, ARGENTINA);
         teams.put(AWAYTEAM, AUSTRALIA);
 
-        Match match = new Match(utc, teams);
-        Assertions.assertTrue(match.getHomeTeam().equals(ARGENTINA));
-        Assertions.assertTrue(match.getAwayTeam().equals(AUSTRALIA));
-        Assertions.assertTrue(match.getHomeTeamScore()==0);
-        Assertions.assertTrue(match.getAwayTeamScore()==0);
-        Assertions.assertTrue(match.isInProgress());
-        Assertions.assertTrue(utc.equals(match.getStartTime()));
+        MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
+        Assertions.assertTrue(matchInProgress.getHomeTeam().equals(ARGENTINA));
+        Assertions.assertTrue(matchInProgress.getAwayTeam().equals(AUSTRALIA));
+        Assertions.assertTrue(matchInProgress.getHomeTeamScore()==0);
+        Assertions.assertTrue(matchInProgress.getAwayTeamScore()==0);
+        Assertions.assertTrue(matchInProgress.isInProgress());
+        Assertions.assertTrue(utc.equals(matchInProgress.getStartTime()));
     }
 
     /**
@@ -41,9 +41,9 @@ public class MatchTest {
         teams.put(HOMETEAM, ARGENTINA);
         teams.put(AWAYTEAM, AUSTRALIA);
 
-        Match match = new Match(utc, teams);
-        match.finish();
-        Assertions.assertFalse(match.setScore(3,1));
+        MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
+        matchInProgress.finish();
+        Assertions.assertFalse(matchInProgress.setScore(3,1));
     }
 
     /**
@@ -56,10 +56,10 @@ public class MatchTest {
         teams.put(HOMETEAM, ARGENTINA);
         teams.put(AWAYTEAM, AUSTRALIA);
 
-        Match match = new Match(utc, teams);
-        Assertions.assertTrue(match.setScore(3,1));
-        Assertions.assertTrue(match.getHomeTeamScore()==3);
-        Assertions.assertTrue(match.getAwayTeamScore()==1);
+        MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
+        Assertions.assertTrue(matchInProgress.setScore(3,1));
+        Assertions.assertTrue(matchInProgress.getHomeTeamScore()==3);
+        Assertions.assertTrue(matchInProgress.getAwayTeamScore()==1);
     }
 
     /**
@@ -71,7 +71,7 @@ public class MatchTest {
         Map<String, String> teams = new HashMap<>();
         teams.put(HOMETEAM, ARGENTINA);
         teams.put(AWAYTEAM, ARGENTINA);
-        Assertions.assertThrows(ScoreBoardException.class, ()-> new Match(utc, teams));
+        Assertions.assertThrows(ScoreBoardException.class, ()-> new MatchInProgress(utc, teams));
     }
 
     /**
@@ -83,6 +83,6 @@ public class MatchTest {
         Map<String, String> teams = new HashMap<>();
         teams.put(HOMETEAM, null);
         teams.put(AWAYTEAM, ARGENTINA);
-        Assertions.assertThrows(ScoreBoardException.class, ()-> new Match(utc, teams));
+        Assertions.assertThrows(ScoreBoardException.class, ()-> new MatchInProgress(utc, teams));
     }
 }

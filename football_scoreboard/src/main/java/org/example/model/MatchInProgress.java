@@ -17,13 +17,13 @@ import static org.example.model.Constants.HOMETEAM;
  * One of the teams is home team and the other is away team
  * For the whole match home team and away team may not interchange their status
  */
-public class Match {
+public class MatchInProgress {
     private boolean inProgress;
     private final OffsetDateTime startedAt;
     private final Map<String, String> teams; //example: HOMETEAM:Argentina, AWAYTEAM:Australia
     private final Map<String, Integer> currentScore; //example: HOMETEAM:3, AWAYTEAM:1
 
-    public Match(OffsetDateTime startedAt, Map<String, String> teams) {
+    public MatchInProgress(OffsetDateTime startedAt, Map<String, String> teams) {
         if(teams.get(HOMETEAM) == null || teams.get(AWAYTEAM) == null) {
             throw new ScoreBoardException("None of the Teams may be null", null);
         }
@@ -46,7 +46,7 @@ public class Match {
         if(o.getClass()!=this.getClass()) {
             return false;
         }
-        Match other = ((Match)(o));
+        MatchInProgress other = ((MatchInProgress)(o));
         if(this.getStartTime().equals(other.getStartTime()) && this.getHomeTeam().equals(other.getHomeTeam()) && this.getAwayTeam().equals(other.getAwayTeam())) {
             return true;
         }
