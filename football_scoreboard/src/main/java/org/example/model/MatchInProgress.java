@@ -18,7 +18,6 @@ import static org.example.model.Constants.HOMETEAM;
  * For the whole match home team and away team may not interchange their status
  */
 public class MatchInProgress {
-    private boolean inProgress;
     private final OffsetDateTime startedAt;
     private final Map<String, String> teams; //example: HOMETEAM:Argentina, AWAYTEAM:Australia
     private final Map<String, Integer> currentScore; //example: HOMETEAM:3, AWAYTEAM:1
@@ -31,7 +30,6 @@ public class MatchInProgress {
             throw new ScoreBoardException("Two teams must be different", null);
         }
 
-        this.inProgress = true;
         this.startedAt = startedAt;
         this.teams = teams;
         this.currentScore = new HashMap<>();
@@ -54,9 +52,6 @@ public class MatchInProgress {
     }
 
     public boolean setScore(int home, int away) {
-        if(!inProgress) { //After the match is finished, the score may not be changed
-            return false;
-        }
         currentScore.put(HOMETEAM, home);
         currentScore.put(AWAYTEAM, away);
         return true;
@@ -78,15 +73,8 @@ public class MatchInProgress {
         return currentScore.get(AWAYTEAM);
     }
 
-    public boolean isInProgress() {
-        return inProgress;
-    }
-
     public OffsetDateTime getStartTime() {
         return startedAt;
     }
 
-    public void finish() {
-        inProgress = false;
-    }
 }

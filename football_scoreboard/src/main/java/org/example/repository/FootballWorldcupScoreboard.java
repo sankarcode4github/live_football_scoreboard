@@ -2,7 +2,6 @@ package org.example.repository;
 
 import org.example.exception.ScoreBoardException;
 import org.example.model.MatchInProgress;
-import org.example.model.MatchComparator;
 
 import java.util.*;
 
@@ -13,15 +12,17 @@ import java.util.*;
  */
 public class FootballWorldcupScoreboard {
 
-    private Map<String, MatchInProgress> scoreBoard = new HashMap<>(); //Live match score board
-    private Set<String> currentAwayTeams = new HashSet<>();
-    private TreeSet<MatchInProgress> summary = new TreeSet<>(new MatchComparator()); //The summary
+    private final Map<String, MatchInProgress> scoreBoard = new HashMap<>(); //Live match score board
+    private final Set<String> currentlyPlayingTeams = new HashSet<>();
+    private final TreeSet<MatchInProgress> summary; //The summary
+
+    public FootballWorldcupScoreboard(Comparator<MatchInProgress> comparator) {
+        summary = new TreeSet<>(comparator);
+    }
 
     /**
      * Add a new match which has just started
-     * @param homeTeam
-     * @param matchInProgress
-     * @return
+     *
      */
     public boolean add(String homeTeam, MatchInProgress matchInProgress) {
         if(matchInProgress == null || homeTeam == null) {
@@ -30,21 +31,23 @@ public class FootballWorldcupScoreboard {
         if(scoreBoard.containsKey(homeTeam)) {
             throw new ScoreBoardException("The same home team is already playing, so another match with it is not possible", null);
         }
-        if(currentAwayTeams.contains(matchInProgress.getAwayTeam())) {
-            throw new ScoreBoardException("The same away team is already playing, so another match with it is not possible", null);
+        if(currentlyPlayingTeams.contains(matchInProgress.getAwayTeam())) {
+            throw new ScoreBoardException("The same team is already playing, so another match with it is not possible", null);
+        }
+        if(currentlyPlayingTeams.contains(matchInProgress.getHomeTeam())) {
+            throw new ScoreBoardException("The same team is already playing, so another match with it is not possible", null);
         }
         scoreBoard.put(homeTeam, matchInProgress);
-        currentAwayTeams.add(matchInProgress.getAwayTeam());
+        currentlyPlayingTeams.add(matchInProgress.getAwayTeam());
+        currentlyPlayingTeams.add(matchInProgress.getHomeTeam());
         summary.add(matchInProgress);
         return true;
     }
 
     /**
      * Set the new score of an ongoing match after a team scores
-     * @param homeTeam
-     * @param homeScore
-     * @param awayScore
-     * @return
+     * The summary also changes
+     *
      */
     public boolean setScore(String homeTeam, int homeScore, int awayScore){
         if(!scoreBoard.containsKey(homeTeam)) {
@@ -61,6 +64,26 @@ public class FootballWorldcupScoreboard {
         return scoreBoard.get(homeTeam);
     }
 
+    /**
+     * Remove a finished match
+     *
+     */
+    public boolean remove(String homeTeam) {
+        if(!scoreBoard.containsKey(homeTeam)) {
+            return false;
+        }
+        MatchInProgress matchInProgress = scoreBoard.get(homeTeam);
+        summary.remove(matchInProgress);
+        currentlyPlayingTeams.remove(matchInProgress.getAwayTeam());
+        currentlyPlayingTeams.remove(matchInProgress.getHomeTeam());
+        scoreBoard.remove(homeTeam);
+        return true;
+    }
+
+    /**
+     * Get the summary of all the current matches
+     *
+     */
     public List<MatchInProgress> getSummary() {
         List<MatchInProgress> result = new ArrayList<>();
         for(MatchInProgress matchInProgress :summary) {

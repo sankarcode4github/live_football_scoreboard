@@ -1,3 +1,5 @@
+package org.example.tests;
+
 import org.example.exception.ScoreBoardException;
 import org.example.model.MatchInProgress;
 import org.junit.jupiter.api.Assertions;
@@ -27,23 +29,7 @@ public class MatchInProgressTest {
         Assertions.assertTrue(matchInProgress.getAwayTeam().equals(AUSTRALIA));
         Assertions.assertTrue(matchInProgress.getHomeTeamScore()==0);
         Assertions.assertTrue(matchInProgress.getAwayTeamScore()==0);
-        Assertions.assertTrue(matchInProgress.isInProgress());
         Assertions.assertTrue(utc.equals(matchInProgress.getStartTime()));
-    }
-
-    /**
-     * Score may not be set after match is already finished
-     */
-    @Test
-    public void testFootballMatchSetScoreWhenMatchIsFinished() {
-        OffsetDateTime utc = OffsetDateTime.of(2023, 4, 9, 20, 15, 45, 345875000, ZoneOffset.UTC);
-        Map<String, String> teams = new HashMap<>();
-        teams.put(HOMETEAM, ARGENTINA);
-        teams.put(AWAYTEAM, AUSTRALIA);
-
-        MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
-        matchInProgress.finish();
-        Assertions.assertFalse(matchInProgress.setScore(3,1));
     }
 
     /**
