@@ -33,7 +33,7 @@ public class MatchInProgressTest {
     }
 
     /**
-     * When a match is in progress, score can always be set
+     * When a match is in progress, score can always be set correctly
      */
     @Test
     public void testSetScoreOfAMatchInProgress() {
@@ -70,5 +70,29 @@ public class MatchInProgressTest {
         teams.put(HOMETEAM, null);
         teams.put(AWAYTEAM, ARGENTINA);
         Assertions.assertThrows(ScoreBoardException.class, ()-> new MatchInProgress(utc, teams));
+    }
+
+    @Test
+    public void testNullStartTime() {
+        OffsetDateTime utc = null;
+        Map<String, String> teams = new HashMap<>();
+        teams.put(HOMETEAM, AUSTRALIA);
+        teams.put(AWAYTEAM, ARGENTINA);
+        Assertions.assertThrows(ScoreBoardException.class, ()-> new MatchInProgress(utc, teams));
+    }
+
+    /**
+     * A football match may not last for more than 6 hours
+     * So a start time may not be 6 hours ago or more
+     */
+    @Test
+    public void testVeryOldStartTime() {
+        OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC).minusHours(7);
+        Map<String, String> teams = new HashMap<>();
+        teams.put(HOMETEAM, AUSTRALIA);
+        teams.put(AWAYTEAM, ARGENTINA);
+        Assertions.assertThrows(ScoreBoardException.class, ()-> new MatchInProgress(utc, teams));
+        OffsetDateTime utc1 = OffsetDateTime.now(ZoneOffset.UTC).minusHours(6);
+        Assertions.assertThrows(ScoreBoardException.class, ()-> new MatchInProgress(utc1, teams));
     }
 }

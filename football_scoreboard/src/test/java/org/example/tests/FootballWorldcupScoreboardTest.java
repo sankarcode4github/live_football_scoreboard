@@ -3,7 +3,7 @@ package org.example.tests;
 import org.example.exception.ScoreBoardException;
 import org.example.model.MatchComparator;
 import org.example.model.MatchInProgress;
-import org.example.repository.FootballWorldcupScoreboard;
+import org.example.repository.impl.FootballWorldcupScoreboard;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +22,7 @@ public class FootballWorldcupScoreboardTest {
      */
     @Test
     public void testNullMatch() {
-        FootballWorldcupScoreboard repo = new FootballWorldcupScoreboard(new MatchComparator());
+        FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
         Assertions.assertFalse(repo.add(ARGENTINA,null));
     }
 
@@ -36,7 +36,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(HOMETEAM, MEXICO);
         teams.put(AWAYTEAM, CANADA);
         MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
-        FootballWorldcupScoreboard repo = new FootballWorldcupScoreboard(new MatchComparator());
+        FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
         repo.add(MEXICO, matchInProgress);
         Assertions.assertTrue(repo.setScore(MEXICO, 3, 2));
         Assertions.assertFalse(repo.setScore(AUSTRALIA, 3, 2)); //No game is currently going on
@@ -54,7 +54,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(AWAYTEAM, AUSTRALIA);
 
         MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
-        FootballWorldcupScoreboard repo = new FootballWorldcupScoreboard(new MatchComparator());
+        FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
         Assertions.assertFalse(repo.add(null, matchInProgress));
     }
 
@@ -70,7 +70,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(AWAYTEAM, AUSTRALIA);
 
         MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
-        FootballWorldcupScoreboard repo = new FootballWorldcupScoreboard(new MatchComparator());
+        FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
         repo.add(ARGENTINA, matchInProgress);
 
         teams = new HashMap<>();
@@ -95,7 +95,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(AWAYTEAM, AUSTRALIA);
 
         MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
-        FootballWorldcupScoreboard repo = new FootballWorldcupScoreboard(new MatchComparator());
+        FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
         repo.add(ARGENTINA, matchInProgress);
 
         teams = new HashMap<>();
@@ -111,7 +111,7 @@ public class FootballWorldcupScoreboardTest {
     /**
      * Mexico is trying to play as home team and away team in two different matches at the same time
      * This should not be allowed
-     * @throws InterruptedException
+     *
      */
     @Test
     public void testAwayTeamIsAlreadyPlayingAsHomeTeam() throws InterruptedException {
@@ -120,7 +120,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(HOMETEAM, MEXICO);
         teams.put(AWAYTEAM, CANADA);
         MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
-        FootballWorldcupScoreboard repo = new FootballWorldcupScoreboard(new MatchComparator());
+        FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
         repo.add(MEXICO, matchInProgress);
         Thread.sleep(50);
         utc = OffsetDateTime.now(ZoneOffset.UTC);
@@ -145,7 +145,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(AWAYTEAM, AUSTRALIA);
 
         MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
-        FootballWorldcupScoreboard repo = new FootballWorldcupScoreboard(new MatchComparator());
+        FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
         repo.add(ARGENTINA, matchInProgress);
         Assertions.assertNotNull(repo.get(ARGENTINA)); //The match is correctly stored
         Assertions.assertTrue(repo.get(ARGENTINA).getAwayTeam().equals(AUSTRALIA)); //The away team is correct
@@ -168,7 +168,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(AWAYTEAM, AUSTRALIA);
 
         MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
-        FootballWorldcupScoreboard repo = new FootballWorldcupScoreboard(new MatchComparator());
+        FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
 
         repo.add(ARGENTINA, matchInProgress);
 
@@ -215,7 +215,7 @@ public class FootballWorldcupScoreboardTest {
      * SPAIN 0 BRAZIL 0
      * MEXICO 0 CANADA 0
      *
-     * @throws InterruptedException
+     *
      */
     @Test
     public void testSummaryChangesAfterAddingNewLiveMatches() throws InterruptedException {
@@ -224,7 +224,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(HOMETEAM, MEXICO);
         teams.put(AWAYTEAM, CANADA);
         MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
-        FootballWorldcupScoreboard repo = new FootballWorldcupScoreboard(new MatchComparator());
+        FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
         repo.add(MEXICO, matchInProgress);
         Thread.sleep(50);
         utc = OffsetDateTime.now(ZoneOffset.UTC);
@@ -264,7 +264,7 @@ public class FootballWorldcupScoreboardTest {
      * 3. Mexico 0 - Canada 5
      * 4. Argentina 3 - Australia 1
      * 5. Germany 2 - France 2
-     * @throws InterruptedException
+     *
      */
     @Test
     public void testSummaryChangesAfterScoreChanges() throws InterruptedException {
@@ -273,7 +273,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(HOMETEAM, MEXICO);
         teams.put(AWAYTEAM, CANADA);
         MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
-        FootballWorldcupScoreboard repo = new FootballWorldcupScoreboard(new MatchComparator());
+        FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
         repo.add(MEXICO, matchInProgress);
 
         Thread.sleep(50);
@@ -332,7 +332,7 @@ public class FootballWorldcupScoreboardTest {
      *
      * 3. Argentina 3 - Australia 1
      * 4. Germany 2 - France 2
-     * @throws InterruptedException
+     *
      */
     @Test
     public void testSummaryChangesAfterAMatchFinishes() throws InterruptedException {
@@ -341,7 +341,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(HOMETEAM, MEXICO);
         teams.put(AWAYTEAM, CANADA);
         MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
-        FootballWorldcupScoreboard repo = new FootballWorldcupScoreboard(new MatchComparator());
+        FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
         repo.add(MEXICO, matchInProgress);
 
         Thread.sleep(50);

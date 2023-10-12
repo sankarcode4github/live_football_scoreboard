@@ -3,6 +3,7 @@ package org.example.model;
 import org.example.exception.ScoreBoardException;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +24,13 @@ public class MatchInProgress {
     private final Map<String, Integer> currentScore; //example: HOMETEAM:3, AWAYTEAM:1
 
     public MatchInProgress(OffsetDateTime startedAt, Map<String, String> teams) {
+        if(startedAt == null) {
+            throw new ScoreBoardException("Start time may not be null", null);
+        }
+        OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC).minusHours(6);
+        if(startedAt.isEqual(utc) || startedAt.isBefore(utc)) {
+            throw new ScoreBoardException("Start time may not be 6 hours ago or more", null);
+        }
         if(teams.get(HOMETEAM) == null || teams.get(AWAYTEAM) == null) {
             throw new ScoreBoardException("None of the Teams may be null", null);
         }

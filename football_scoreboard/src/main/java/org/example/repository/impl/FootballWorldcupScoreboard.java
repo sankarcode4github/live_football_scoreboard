@@ -1,30 +1,40 @@
-package org.example.repository;
+package org.example.repository.impl;
 
 import org.example.exception.ScoreBoardException;
 import org.example.model.MatchInProgress;
+import org.example.repository.ScoreBoard;
 
 import java.util.*;
 
 /**
- * This class stores the live scoreboard and the live summary
+ * All the methods of this class is thread safe
+ *
+ * This class stores the live scoreboard and the live summary of current Football world cup
  * The key to store each match in the HashMap is the name of the home Team
- * It also tracks the current away teams who are playing
+ * This class also tracks the current teams who are playing now
+ * This class also provides a summary
  */
-public class FootballWorldcupScoreboard {
+public class FootballWorldcupScoreboard implements ScoreBoard {
 
     private final Map<String, MatchInProgress> scoreBoard = new HashMap<>(); //Live match score board
     private final Set<String> currentlyPlayingTeams = new HashSet<>();
     private final TreeSet<MatchInProgress> summary; //The summary
 
-    public FootballWorldcupScoreboard(Comparator<MatchInProgress> comparator) {
+    private FootballWorldcupScoreboard(Comparator<MatchInProgress> comparator) {
         summary = new TreeSet<>(comparator);
     }
+
+    public static FootballWorldcupScoreboard getScoreBoard(Comparator<MatchInProgress> comparator) {
+        return new FootballWorldcupScoreboard(comparator);
+    }
+
 
     /**
      * Add a new match which has just started
      *
      */
-    public boolean add(String homeTeam, MatchInProgress matchInProgress) {
+    @Override
+    public synchronized boolean add(String homeTeam, MatchInProgress matchInProgress) {
         if(matchInProgress == null || homeTeam == null) {
             return false;
         }
@@ -49,7 +59,8 @@ public class FootballWorldcupScoreboard {
      * The summary also changes
      *
      */
-    public boolean setScore(String homeTeam, int homeScore, int awayScore){
+    @Override
+    public synchronized boolean setScore(String homeTeam, int homeScore, int awayScore){
         if(!scoreBoard.containsKey(homeTeam)) {
             return false;
         }
@@ -60,6 +71,7 @@ public class FootballWorldcupScoreboard {
         return true;
     }
 
+    @Override
     public MatchInProgress get(String homeTeam) {
         return scoreBoard.get(homeTeam);
     }
@@ -68,7 +80,8 @@ public class FootballWorldcupScoreboard {
      * Remove a finished match
      *
      */
-    public boolean remove(String homeTeam) {
+    @Override
+    public synchronized boolean remove(String homeTeam) {
         if(!scoreBoard.containsKey(homeTeam)) {
             return false;
         }
@@ -81,10 +94,11 @@ public class FootballWorldcupScoreboard {
     }
 
     /**
-     * Get the summary of all the current matches
+     * Get the summary of all the currently ongoing matches
      *
      */
-    public List<MatchInProgress> getSummary() {
+    @Override
+    public synchronized List<MatchInProgress> getSummary() {
         List<MatchInProgress> result = new ArrayList<>();
         for(MatchInProgress matchInProgress :summary) {
             result.add(matchInProgress);
