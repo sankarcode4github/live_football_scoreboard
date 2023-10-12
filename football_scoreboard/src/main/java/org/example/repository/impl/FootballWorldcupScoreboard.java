@@ -2,7 +2,7 @@ package org.example.repository.impl;
 
 import org.example.exception.ScoreBoardException;
 import org.example.model.MatchInProgress;
-import org.example.repository.ScoreBoard;
+import org.example.repository.ScoreBoardDataStore;
 
 import java.util.*;
 
@@ -14,10 +14,9 @@ import java.util.*;
  * This class also tracks the current teams who are playing now
  * This class also provides a summary
  */
-public class FootballWorldcupScoreboard implements ScoreBoard {
+public class FootballWorldcupScoreboard implements ScoreBoardDataStore {
 
     private final Map<String, MatchInProgress> scoreBoard = new HashMap<>(); //Live match score board
-    private final Set<String> currentlyPlayingTeams = new HashSet<>();
     private final TreeSet<MatchInProgress> summary; //The summary
 
     private FootballWorldcupScoreboard(Comparator<MatchInProgress> comparator) {
@@ -35,21 +34,26 @@ public class FootballWorldcupScoreboard implements ScoreBoard {
      */
     @Override
     public synchronized boolean add(String homeTeam, MatchInProgress matchInProgress) {
-        if(matchInProgress == null || homeTeam == null) {
+        if(homeTeam == null) {
+            //Log it so that it may be debugged
             return false;
         }
+        if(matchInProgress == null) {
+            //Log it so that it may be debugged
+            throw new ScoreBoardException("Match may not be null", null);
+        }
         if(scoreBoard.containsKey(homeTeam)) {
-            throw new ScoreBoardException("The same home team is already playing, so another match with it is not possible", null);
+            //Log it so that it may be debugged
+            throw new ScoreBoardException("The same team " + homeTeam + " is already playing as a home team, so another match with it is not possible", null);
         }
-        if(currentlyPlayingTeams.contains(matchInProgress.getAwayTeam())) {
-            throw new ScoreBoardException("The same team is already playing, so another match with it is not possible", null);
+        if(scoreBoard.containsKey(matchInProgress.getAwayTeam())) {
+            //Log it so that it may be debugged
+            throw new ScoreBoardException("The same team " + matchInProgress.getAwayTeam() + " is already playing as an away team, so another match with it is not possible", null);
         }
-        if(currentlyPlayingTeams.contains(matchInProgress.getHomeTeam())) {
-            throw new ScoreBoardException("The same team is already playing, so another match with it is not possible", null);
-        }
+
         scoreBoard.put(homeTeam, matchInProgress);
-        currentlyPlayingTeams.add(matchInProgress.getAwayTeam());
-        currentlyPlayingTeams.add(matchInProgress.getHomeTeam());
+        scoreBoard.put(matchInProgress.getAwayTeam(), matchInProgress);
+
         summary.add(matchInProgress);
         return true;
     }
@@ -61,8 +65,13 @@ public class FootballWorldcupScoreboard implements ScoreBoard {
      */
     @Override
     public synchronized boolean setScore(String homeTeam, int homeScore, int awayScore){
-        if(!scoreBoard.containsKey(homeTeam)) {
+        if(homeTeam == null) {
+            //Log it so that it may be debugged
             return false;
+        }
+        if(!scoreBoard.containsKey(homeTeam)) {
+            //Log it so that it may be debugged
+            throw new ScoreBoardException("There is no such match going on with this home team "+homeTeam, null);
         }
         MatchInProgress matchInProgress = scoreBoard.get(homeTeam);
         summary.remove(matchInProgress);
@@ -82,14 +91,19 @@ public class FootballWorldcupScoreboard implements ScoreBoard {
      */
     @Override
     public synchronized boolean remove(String homeTeam) {
-        if(!scoreBoard.containsKey(homeTeam)) {
+        if(homeTeam == null) {
+            //Log it so that it may be debugged
             return false;
+        }
+        if(!scoreBoard.containsKey(homeTeam)) {
+            //Log it so that it may be debugged
+            throw new ScoreBoardException("There is no such match going on with this home team "+homeTeam, null);
         }
         MatchInProgress matchInProgress = scoreBoard.get(homeTeam);
         summary.remove(matchInProgress);
-        currentlyPlayingTeams.remove(matchInProgress.getAwayTeam());
-        currentlyPlayingTeams.remove(matchInProgress.getHomeTeam());
-        scoreBoard.remove(homeTeam);
+        scoreBoard.remove(matchInProgress.getAwayTeam());
+        scoreBoard.remove(matchInProgress.getHomeTeam());
+
         return true;
     }
 

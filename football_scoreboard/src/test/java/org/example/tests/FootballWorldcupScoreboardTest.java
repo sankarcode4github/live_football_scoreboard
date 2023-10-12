@@ -23,7 +23,8 @@ public class FootballWorldcupScoreboardTest {
     @Test
     public void testNullMatch() {
         FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
-        Assertions.assertFalse(repo.add(ARGENTINA,null));
+        Assertions.assertThrows(ScoreBoardException.class, () -> repo.add(SPAIN, null),
+                "Match may not be null");
     }
 
     /**
@@ -39,32 +40,51 @@ public class FootballWorldcupScoreboardTest {
         FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
         repo.add(MEXICO, matchInProgress);
         Assertions.assertTrue(repo.setScore(MEXICO, 3, 2));
-        Assertions.assertFalse(repo.setScore(AUSTRALIA, 3, 2)); //No game is currently going on
-                                                                                  //where Australia is the home team
+        Assertions.assertThrows(ScoreBoardException.class, () -> repo.setScore(AUSTRALIA, 3, 2),
+                "No game is currently going on where Australia is the home team"); //No game is currently going on where Australia is the home team
+
     }
 
     /**
      * home team may not be null
+     * Match may not be null
      */
     @Test
-    public void testNullHomeTeam() {
-        OffsetDateTime utc = OffsetDateTime.of(2023, 4, 9, 20, 15, 45, 345875000, ZoneOffset.UTC);
+    public void testNullHomeTeamOrNullMatch() {
+        OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC); //OffsetDateTime.of(2023, 4, 9, 20, 15, 45, 345875000, ZoneOffset.UTC);
         Map<String, String> teams = new HashMap<>();
         teams.put(HOMETEAM, ARGENTINA);
         teams.put(AWAYTEAM, AUSTRALIA);
 
         MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
         FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
-        Assertions.assertFalse(repo.add(null, matchInProgress));
+        Assertions.assertFalse(repo.add(null, matchInProgress)); //home team may not be null
+        Assertions.assertThrows(ScoreBoardException.class, () -> repo.add(ARGENTINA, null),
+                "The match may not be null");
     }
 
+    /**
+     * A home team which is not playing is passed
+     * A home team which is null is passed
+     */
+    @Test
+    public void testWrongHomeTeamPassed() {
+        FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
+        Assertions.assertThrows(ScoreBoardException.class, () -> repo.setScore(MEXICO, 3,1),
+                "No match is going on with this home team ");
+        Assertions.assertFalse(repo.setScore(null, 3,1));
+        Assertions.assertThrows(ScoreBoardException.class, () -> repo.remove(MEXICO),
+                "No match is going on with this home team ");
+        Assertions.assertFalse(repo.remove(null));
+
+    }
     /**
      * If the home team is already playing we may not add a new match with the same home team ARGENTINA
      * The same home team ARGENTINA may not play with away teams AUSTRALIA and SPAIN at the same time
      */
     @Test
     public void testHomeTeamIsAlreadyPlaying() {
-        OffsetDateTime utc = OffsetDateTime.of(2023, 4, 9, 20, 15, 45, 345875000, ZoneOffset.UTC);
+        OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC); //OffsetDateTime.of(2023, 4, 9, 20, 15, 45, 345875000, ZoneOffset.UTC);
         Map<String, String> teams = new HashMap<>();
         teams.put(HOMETEAM, ARGENTINA);
         teams.put(AWAYTEAM, AUSTRALIA);
@@ -89,7 +109,7 @@ public class FootballWorldcupScoreboardTest {
      */
     @Test
     public void testAwayTeamIsAlreadyPlaying() {
-        OffsetDateTime utc = OffsetDateTime.of(2023, 4, 9, 20, 15, 45, 345875000, ZoneOffset.UTC);
+        OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC);//OffsetDateTime.of(2023, 4, 9, 20, 15, 45, 345875000, ZoneOffset.UTC);
         Map<String, String> teams = new HashMap<>();
         teams.put(HOMETEAM, ARGENTINA);
         teams.put(AWAYTEAM, AUSTRALIA);
@@ -139,7 +159,7 @@ public class FootballWorldcupScoreboardTest {
      */
     @Test
     public void testGetMatch() {
-        OffsetDateTime utc = OffsetDateTime.of(2023, 4, 9, 20, 15, 45, 345875000, ZoneOffset.UTC);
+        OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC); //OffsetDateTime.of(2023, 4, 9, 20, 15, 45, 345875000, ZoneOffset.UTC);
         Map<String, String> teams = new HashMap<>();
         teams.put(HOMETEAM, ARGENTINA);
         teams.put(AWAYTEAM, AUSTRALIA);
@@ -162,7 +182,7 @@ public class FootballWorldcupScoreboardTest {
      */
     @Test
     public void testRemoveMatch() {
-        OffsetDateTime utc = OffsetDateTime.of(2023, 4, 9, 20, 15, 45, 345875000, ZoneOffset.UTC);
+        OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC); //OffsetDateTime.of(2023, 4, 9, 20, 15, 45, 345875000, ZoneOffset.UTC);
         Map<String, String> teams = new HashMap<>();
         teams.put(HOMETEAM, ARGENTINA);
         teams.put(AWAYTEAM, AUSTRALIA);
@@ -173,7 +193,7 @@ public class FootballWorldcupScoreboardTest {
         repo.add(ARGENTINA, matchInProgress);
 
         Assertions.assertNotNull(repo.get(ARGENTINA)); //Match added properly
-        Assertions.assertTrue(repo.get(ARGENTINA).getAwayTeam().equals(AUSTRALIA)); //Away Team added properly
+        Assertions.assertTrue(repo.get(ARGENTINA).getAwayTeam().equals(AUSTRALIA)); //Away Team assigned properly
 
 
         repo.remove(ARGENTINA);

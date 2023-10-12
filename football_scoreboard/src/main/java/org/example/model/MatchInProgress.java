@@ -25,16 +25,20 @@ public class MatchInProgress {
 
     public MatchInProgress(OffsetDateTime startedAt, Map<String, String> teams) {
         if(startedAt == null) {
+            //Log it so that it may be debugged
             throw new ScoreBoardException("Start time may not be null", null);
         }
-        OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC).minusHours(6);
+        OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC).minusHours(4);
         if(startedAt.isEqual(utc) || startedAt.isBefore(utc)) {
-            throw new ScoreBoardException("Start time may not be 6 hours ago or more", null);
+            //Log it so that it may be debugged
+            throw new ScoreBoardException("Start time may not 4 hours ago or more", null);
         }
         if(teams.get(HOMETEAM) == null || teams.get(AWAYTEAM) == null) {
+            //Log it so that it may be debugged
             throw new ScoreBoardException("None of the Teams may be null", null);
         }
         if(teams.get(HOMETEAM).equals(teams.get(AWAYTEAM))) {
+            //Log it so that it may be debugged
             throw new ScoreBoardException("Two teams must be different", null);
         }
 

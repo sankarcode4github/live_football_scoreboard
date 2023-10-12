@@ -19,7 +19,7 @@ public class MatchInProgressTest {
      */
     @Test
     public void testFootballMatchCreation() {
-        OffsetDateTime utc = OffsetDateTime.of(2023, 4, 9, 20, 15, 45, 345875000, ZoneOffset.UTC);
+        OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC); //OffsetDateTime.of(2023, 4, 9, 20, 15, 45, 345875000, ZoneOffset.UTC);
         Map<String, String> teams = new HashMap<>();
         teams.put(HOMETEAM, ARGENTINA);
         teams.put(AWAYTEAM, AUSTRALIA);
@@ -37,7 +37,7 @@ public class MatchInProgressTest {
      */
     @Test
     public void testSetScoreOfAMatchInProgress() {
-        OffsetDateTime utc = OffsetDateTime.of(2023, 4, 9, 20, 15, 45, 345875000, ZoneOffset.UTC);
+        OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC); //OffsetDateTime.of(2023, 4, 9, 20, 15, 45, 345875000, ZoneOffset.UTC);
         Map<String, String> teams = new HashMap<>();
         teams.put(HOMETEAM, ARGENTINA);
         teams.put(AWAYTEAM, AUSTRALIA);
@@ -82,8 +82,8 @@ public class MatchInProgressTest {
     }
 
     /**
-     * A football match may not last for more than 6 hours
-     * So a start time may not be 6 hours ago or more
+     * A football match may not last for more than 4 hours
+     * So a start time may not be 4 hours ago or more
      */
     @Test
     public void testVeryOldStartTime() {
@@ -92,7 +92,7 @@ public class MatchInProgressTest {
         teams.put(HOMETEAM, AUSTRALIA);
         teams.put(AWAYTEAM, ARGENTINA);
         Assertions.assertThrows(ScoreBoardException.class, ()-> new MatchInProgress(utc, teams));
-        OffsetDateTime utc1 = OffsetDateTime.now(ZoneOffset.UTC).minusHours(6);
+        OffsetDateTime utc1 = OffsetDateTime.now(ZoneOffset.UTC).minusHours(4);
         Assertions.assertThrows(ScoreBoardException.class, ()-> new MatchInProgress(utc1, teams));
     }
 }
