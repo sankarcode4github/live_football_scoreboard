@@ -42,6 +42,8 @@ To store the summary a TreeSet has been used.
 
 ## Design 
 
+TDD is used as practice.
+
 Solid principles have been thought of mostly.
 
 Each class tries to follow single responsibility and just does what it's supposed to do. No more no less.
