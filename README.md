@@ -33,7 +33,12 @@ It is assumed that a when a match starts, there may be a fraction of a second de
 
 A HashMap has been used to store the individual matches. Here the keys of this Hashmap are the home team and the away team. So if a match is being played between ARGENTINA and AUSTRALIA, then there will be two keys as String and both will point to this match as the value in the HashMap.
 
+![HashMap](https://github.com/sankarcode4github/live_football_scoreboard/assets/142508542/197fbb61-9e5c-4e97-8632-6b853dbc3baf)
+
+
 To store the summary a TreeSet has been used.
+
+![TreeSet](https://github.com/sankarcode4github/live_football_scoreboard/assets/142508542/8478967d-5cb0-4b43-b2e4-a55db557694b)
 
 ## Design 
 
