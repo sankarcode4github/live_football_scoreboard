@@ -25,11 +25,11 @@ public class MatchInProgressTest {
         teams.put(AWAYTEAM, AUSTRALIA);
 
         MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
-        Assertions.assertTrue(matchInProgress.getHomeTeam().equals(ARGENTINA));
-        Assertions.assertTrue(matchInProgress.getAwayTeam().equals(AUSTRALIA));
-        Assertions.assertTrue(matchInProgress.getHomeTeamScore()==0);
-        Assertions.assertTrue(matchInProgress.getAwayTeamScore()==0);
-        Assertions.assertTrue(utc.equals(matchInProgress.getStartTime()));
+        Assertions.assertEquals(ARGENTINA, matchInProgress.getHomeTeam());
+        Assertions.assertEquals(AUSTRALIA, matchInProgress.getAwayTeam());
+        Assertions.assertEquals(0, matchInProgress.getHomeTeamScore());
+        Assertions.assertEquals(0, matchInProgress.getAwayTeamScore());
+        Assertions.assertEquals(utc, matchInProgress.getStartTime());
     }
 
     /**
@@ -44,8 +44,8 @@ public class MatchInProgressTest {
 
         MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
         Assertions.assertTrue(matchInProgress.setScore(3,1));
-        Assertions.assertTrue(matchInProgress.getHomeTeamScore()==3);
-        Assertions.assertTrue(matchInProgress.getAwayTeamScore()==1);
+        Assertions.assertEquals(3, matchInProgress.getHomeTeamScore());
+        Assertions.assertEquals(1, matchInProgress.getAwayTeamScore());
     }
 
     /**
@@ -74,16 +74,15 @@ public class MatchInProgressTest {
 
     @Test
     public void testNullStartTime() {
-        OffsetDateTime utc = null;
         Map<String, String> teams = new HashMap<>();
         teams.put(HOMETEAM, AUSTRALIA);
         teams.put(AWAYTEAM, ARGENTINA);
-        Assertions.assertThrows(ScoreBoardException.class, ()-> new MatchInProgress(utc, teams));
+        Assertions.assertThrows(ScoreBoardException.class, ()-> new MatchInProgress(null, teams));
     }
 
     /**
-     * A football match may not last for more than 4 hours
-     * So a start time may not be 4 hours ago or more
+     *
+     * So a start time may not be 1 min ago or more
      */
     @Test
     public void testVeryOldStartTime() {
@@ -91,8 +90,16 @@ public class MatchInProgressTest {
         Map<String, String> teams = new HashMap<>();
         teams.put(HOMETEAM, AUSTRALIA);
         teams.put(AWAYTEAM, ARGENTINA);
-        Assertions.assertThrows(ScoreBoardException.class, ()-> new MatchInProgress(utc, teams));
-        OffsetDateTime utc1 = OffsetDateTime.now(ZoneOffset.UTC).minusHours(4);
-        Assertions.assertThrows(ScoreBoardException.class, ()-> new MatchInProgress(utc1, teams));
+        Assertions.assertThrows(ScoreBoardException.class, ()-> new MatchInProgress(utc, teams)); //Too old, 7 hours
+        OffsetDateTime utc1 = OffsetDateTime.now(ZoneOffset.UTC).minusMinutes(2);
+        Assertions.assertThrows(ScoreBoardException.class, ()-> new MatchInProgress(utc1, teams)); //More than 1 minute
+
+        OffsetDateTime utc2 = OffsetDateTime.now(ZoneOffset.UTC).minusSeconds(1); //perfectly okay
+        MatchInProgress matchInProgress = new MatchInProgress(utc2, teams);
+        Assertions.assertEquals(AUSTRALIA, matchInProgress.getHomeTeam());
+        Assertions.assertEquals(ARGENTINA, matchInProgress.getAwayTeam());
+        Assertions.assertEquals(0, matchInProgress.getHomeTeamScore());
+        Assertions.assertEquals(0, matchInProgress.getAwayTeamScore());
+        Assertions.assertEquals(utc2, matchInProgress.getStartTime());
     }
 }

@@ -1,4 +1,6 @@
-package org.example.model;
+package org.example.helper;
+
+import org.example.model.MatchInProgress;
 
 import java.util.Comparator;
 

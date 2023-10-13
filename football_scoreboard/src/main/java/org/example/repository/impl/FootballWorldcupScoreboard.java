@@ -8,7 +8,7 @@ import java.util.*;
 
 /**
  * All the methods of this class is thread safe
- *
+ * <p>
  * This class stores the live scoreboard and the live summary of current Football world cup
  * The key to store each match in the HashMap is the name of the home Team
  * This class also tracks the current teams who are playing now
@@ -30,7 +30,7 @@ public class FootballWorldcupScoreboard implements ScoreBoardDataStore {
 
     /**
      * Add a new match which has just started
-     *
+     * O(log N) as The Match has to be put in the TreeSet
      */
     @Override
     public synchronized boolean add(String homeTeam, MatchInProgress matchInProgress) {
@@ -61,7 +61,7 @@ public class FootballWorldcupScoreboard implements ScoreBoardDataStore {
     /**
      * Set the new score of an ongoing match after a team scores
      * The summary also changes
-     *
+     * O(log N) as The Match has to be removed and put in the TreeSet
      */
     @Override
     public synchronized boolean setScore(String homeTeam, int homeScore, int awayScore){
@@ -80,14 +80,18 @@ public class FootballWorldcupScoreboard implements ScoreBoardDataStore {
         return true;
     }
 
+    /**
+     * O(1)
+     *
+     */
     @Override
-    public MatchInProgress get(String homeTeam) {
+    public synchronized MatchInProgress get(String homeTeam) {
         return scoreBoard.get(homeTeam);
     }
 
     /**
      * Remove a finished match
-     *
+     * O(log N) as The Match has to be removed from the TreeSet
      */
     @Override
     public synchronized boolean remove(String homeTeam) {
@@ -109,7 +113,7 @@ public class FootballWorldcupScoreboard implements ScoreBoardDataStore {
 
     /**
      * Get the summary of all the currently ongoing matches
-     *
+     * O(n) as the TreeSet is iterated
      */
     @Override
     public synchronized List<MatchInProgress> getSummary() {

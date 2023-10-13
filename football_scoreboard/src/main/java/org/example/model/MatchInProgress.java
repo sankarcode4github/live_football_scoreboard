@@ -28,10 +28,10 @@ public class MatchInProgress {
             //Log it so that it may be debugged
             throw new ScoreBoardException("Start time may not be null", null);
         }
-        OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC).minusHours(4);
+        OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC).minusMinutes(1);
         if(startedAt.isEqual(utc) || startedAt.isBefore(utc)) {
             //Log it so that it may be debugged
-            throw new ScoreBoardException("Start time may not 4 hours ago or more", null);
+            throw new ScoreBoardException("Start time may not 1 min ago or more", null);
         }
         if(teams.get(HOMETEAM) == null || teams.get(AWAYTEAM) == null) {
             //Log it so that it may be debugged

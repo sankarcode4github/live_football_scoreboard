@@ -1,6 +1,6 @@
 package org.example;
 
-import org.example.model.MatchComparator;
+import org.example.helper.MatchComparator;
 import org.example.model.MatchInProgress;
 import org.example.serviceimpl.FootballWCScoreBoardServiceImpl;
 
@@ -47,6 +47,20 @@ public class Main {
 
         summary = service.getSummary();
         System.out.println("\n====After new scores are set====\n");
+        for(int i=0; i<summary.size(); i++) {
+            print(summary, i);
+        }
+
+        service.finishMatch(MEXICO);
+        summary = service.getSummary();
+        System.out.println("\n====After Mexico canada match is aborted due to storm====\n");
+        for(int i=0; i<summary.size(); i++) {
+            print(summary, i);
+        }
+
+        service.updateScore(SPAIN, 10, 4);
+        summary = service.getSummary();
+        System.out.println("\n====After Brazil scores 2 more goals====\n");
         for(int i=0; i<summary.size(); i++) {
             print(summary, i);
         }

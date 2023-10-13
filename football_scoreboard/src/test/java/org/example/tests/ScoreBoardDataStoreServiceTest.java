@@ -2,7 +2,7 @@ package org.example.tests;
 
 import org.example.ScoreBoardService;
 import org.example.exception.ScoreBoardException;
-import org.example.model.MatchComparator;
+import org.example.helper.MatchComparator;
 import org.example.model.MatchInProgress;
 import org.example.serviceimpl.FootballWCScoreBoardServiceImpl;
 import org.junit.jupiter.api.Assertions;
@@ -46,8 +46,7 @@ public class ScoreBoardDataStoreServiceTest {
     @Test
     public void testStartNewMatchNullStartTime() {
         ScoreBoardService service = new FootballWCScoreBoardServiceImpl(new MatchComparator());
-        OffsetDateTime utc = null;
-        Assertions.assertThrows(ScoreBoardException.class, () -> service.startNewMatch(utc, ARGENTINA, AUSTRALIA),
+        Assertions.assertThrows(ScoreBoardException.class, () -> service.startNewMatch(null, ARGENTINA, AUSTRALIA),
                 "The start time may not be null");
     }
 
@@ -115,14 +114,14 @@ public class ScoreBoardDataStoreServiceTest {
     /**     *
      * When the goals are same, start time will decide the order
      * Later the start time, earlier it will show up in the list
-     *
+     * <p>
      * Following is the starting order with current scores
      * a. Mexico 0 - Canada 0   Started 1st
      * b. Spain 0 - Brazil 0   Started 2nd
      * c. Germany 0 - France 0   Started 3rd
      * d. Uruguay 0 - Italy 0   Started 4th
      * e. Argentina 0 - Australia 0   Started 5th/last
-     *
+     * <p>
      * Following is the summary
      * 1. Argentina 0 - Australia 0
      * 2. Uruguay 0 - Italy 0
@@ -155,25 +154,25 @@ public class ScoreBoardDataStoreServiceTest {
 
         List<MatchInProgress> summary = service.getSummary();
 
-        Assertions.assertTrue(summary.get(0).getHomeTeam().equals(ARGENTINA));
-        Assertions.assertTrue(summary.get(1).getHomeTeam().equals(URUGUAY));
-        Assertions.assertTrue(summary.get(2).getHomeTeam().equals(GERMANY));
-        Assertions.assertTrue(summary.get(3).getHomeTeam().equals(SPAIN));
-        Assertions.assertTrue(summary.get(4).getHomeTeam().equals(MEXICO));
+        Assertions.assertEquals(ARGENTINA, summary.get(0).getHomeTeam());
+        Assertions.assertEquals(URUGUAY, summary.get(1).getHomeTeam());
+        Assertions.assertEquals(GERMANY, summary.get(2).getHomeTeam());
+        Assertions.assertEquals(SPAIN, summary.get(3).getHomeTeam());
+        Assertions.assertEquals(MEXICO, summary.get(4).getHomeTeam());
     }
 
     /**
      * When matches have different number of total goal scored, this number will decide the order
      * More is the number of goals, earlier it will come in the order.
      * When the goals are same, start time will decide the order
-     *
+     * <p>
      * Following is the starting order with current scores
      * a. Mexico 0 - Canada 5   Started 1st
      * b. Spain 10 - Brazil 2   Started 2nd
      * c. Germany 2 - France 2   Started 3rd
      * d. Uruguay 6 - Italy 6   Started 4th
      * e. Argentina 3 - Australia 1   Started 5th/last
-     *
+     * <p>
      * Following is the summary
      * 1. Uruguay 6 - Italy 6
      * 2. Spain 10 - Brazil 2
@@ -212,10 +211,10 @@ public class ScoreBoardDataStoreServiceTest {
 
         List<MatchInProgress> summary = service.getSummary();
 
-        Assertions.assertTrue(summary.get(0).getHomeTeam().equals(URUGUAY));
-        Assertions.assertTrue(summary.get(1).getHomeTeam().equals(SPAIN));
-        Assertions.assertTrue(summary.get(2).getHomeTeam().equals(MEXICO));
-        Assertions.assertTrue(summary.get(3).getHomeTeam().equals(ARGENTINA));
-        Assertions.assertTrue(summary.get(4).getHomeTeam().equals(GERMANY));
+        Assertions.assertEquals(URUGUAY, summary.get(0).getHomeTeam());
+        Assertions.assertEquals(SPAIN, summary.get(1).getHomeTeam());
+        Assertions.assertEquals(MEXICO, summary.get(2).getHomeTeam());
+        Assertions.assertEquals(ARGENTINA, summary.get(3).getHomeTeam());
+        Assertions.assertEquals(GERMANY, summary.get(4).getHomeTeam());
     }
 }
