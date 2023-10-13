@@ -33,14 +33,15 @@ public class FootballWorldcupScoreboard implements ScoreBoardDataStore {
      * O(log N) as The Match has to be put in the TreeSet
      */
     @Override
-    public synchronized boolean add(String homeTeam, MatchInProgress matchInProgress) {
-        if(homeTeam == null) {
-            //Log it so that it may be debugged
-            return false;
-        }
+    public synchronized boolean add(MatchInProgress matchInProgress) {
         if(matchInProgress == null) {
             //Log it so that it may be debugged
             throw new ScoreBoardException("Match may not be null", null);
+        }
+        String homeTeam = matchInProgress.getHomeTeam();
+        if(homeTeam == null) {
+            //Log it so that it may be debugged
+            return false;
         }
         if(scoreBoard.containsKey(homeTeam)) {
             //Log it so that it may be debugged

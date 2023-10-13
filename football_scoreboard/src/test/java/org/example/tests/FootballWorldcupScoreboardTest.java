@@ -23,7 +23,7 @@ public class FootballWorldcupScoreboardTest {
     @Test
     public void testNullMatch() {
         FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
-        Assertions.assertThrows(ScoreBoardException.class, () -> repo.add(SPAIN, null),
+        Assertions.assertThrows(ScoreBoardException.class, () -> repo.add(null),
                 "Match may not be null");
     }
 
@@ -38,29 +38,11 @@ public class FootballWorldcupScoreboardTest {
         teams.put(AWAYTEAM, CANADA);
         MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
         FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
-        repo.add(MEXICO, matchInProgress);
+        repo.add(matchInProgress);
         Assertions.assertTrue(repo.setScore(MEXICO, 3, 2));
         Assertions.assertThrows(ScoreBoardException.class, () -> repo.setScore(AUSTRALIA, 3, 2),
                 "No game is currently going on where Australia is the home team"); //No game is currently going on where Australia is the home team
 
-    }
-
-    /**
-     * home team may not be null
-     * Match may not be null
-     */
-    @Test
-    public void testNullHomeTeamOrNullMatch() {
-        OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC); //OffsetDateTime.of(2023, 4, 9, 20, 15, 45, 345875000, ZoneOffset.UTC);
-        Map<String, String> teams = new HashMap<>();
-        teams.put(HOMETEAM, ARGENTINA);
-        teams.put(AWAYTEAM, AUSTRALIA);
-
-        MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
-        FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
-        Assertions.assertFalse(repo.add(null, matchInProgress)); //home team may not be null
-        Assertions.assertThrows(ScoreBoardException.class, () -> repo.add(ARGENTINA, null),
-                "The match may not be null");
     }
 
     /**
@@ -91,14 +73,14 @@ public class FootballWorldcupScoreboardTest {
 
         MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
         FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
-        repo.add(ARGENTINA, matchInProgress);
+        repo.add(matchInProgress);
 
         teams = new HashMap<>();
         teams.put(HOMETEAM, ARGENTINA);
         teams.put(AWAYTEAM, SPAIN);
 
         MatchInProgress matchInProgress1 = new MatchInProgress(utc, teams);
-        Assertions.assertThrows(ScoreBoardException.class, () -> repo.add(ARGENTINA, matchInProgress1),
+        Assertions.assertThrows(ScoreBoardException.class, () -> repo.add(matchInProgress1),
                 "The same home team may not play in more than one matches at the same time");
 
     }
@@ -116,14 +98,14 @@ public class FootballWorldcupScoreboardTest {
 
         MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
         FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
-        repo.add(ARGENTINA, matchInProgress);
+        repo.add(matchInProgress);
 
         teams = new HashMap<>();
         teams.put(HOMETEAM, SPAIN);
         teams.put(AWAYTEAM, AUSTRALIA);
 
         MatchInProgress matchInProgress1 = new MatchInProgress(utc, teams);
-        Assertions.assertThrows(ScoreBoardException.class, () -> repo.add(SPAIN, matchInProgress1),
+        Assertions.assertThrows(ScoreBoardException.class, () -> repo.add(matchInProgress1),
                 "The same away team may not play in more than one matches at the same time");
     }
 
@@ -141,7 +123,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(AWAYTEAM, CANADA);
         MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
         FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
-        repo.add(MEXICO, matchInProgress);
+        repo.add(matchInProgress);
         Thread.sleep(50);
         utc = OffsetDateTime.now(ZoneOffset.UTC);
         teams = new HashMap<>();
@@ -149,7 +131,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(AWAYTEAM, MEXICO);
         MatchInProgress matchInProgress1 = new MatchInProgress(utc, teams);
 
-        Assertions.assertThrows(ScoreBoardException.class, () -> repo.add(SPAIN, matchInProgress1),
+        Assertions.assertThrows(ScoreBoardException.class, () -> repo.add(matchInProgress1),
                 "The same home team may not play in another match as away team at the same time");
     }
 
@@ -166,7 +148,7 @@ public class FootballWorldcupScoreboardTest {
 
         MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
         FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
-        repo.add(ARGENTINA, matchInProgress);
+        repo.add(matchInProgress);
         Assertions.assertNotNull(repo.get(ARGENTINA)); //The match is correctly stored
         Assertions.assertEquals(AUSTRALIA, repo.get(ARGENTINA).getAwayTeam()); //The away team is correct
         Assertions.assertNotNull(repo.get(AUSTRALIA)); //The smae match is obtained by away team as key
@@ -193,7 +175,7 @@ public class FootballWorldcupScoreboardTest {
         MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
         FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
 
-        repo.add(ARGENTINA, matchInProgress);
+        repo.add(matchInProgress);
 
         Assertions.assertNotNull(repo.get(ARGENTINA)); //Match added properly
         Assertions.assertEquals(AUSTRALIA, repo.get(ARGENTINA).getAwayTeam()); //Away Team assigned properly
@@ -208,7 +190,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(HOMETEAM, ARGENTINA);
         teams.put(AWAYTEAM, MEXICO);
         matchInProgress = new MatchInProgress(utc, teams);
-        repo.add(ARGENTINA, matchInProgress); //Now a different match with the same home team "ARGENTINA" added
+        repo.add(matchInProgress); //Now a different match with the same home team "ARGENTINA" added
 
         Assertions.assertNotNull(repo.get(ARGENTINA));
         Assertions.assertEquals(MEXICO, repo.get(ARGENTINA).getAwayTeam());
@@ -219,7 +201,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(HOMETEAM, BRAZIL);
         teams.put(AWAYTEAM, AUSTRALIA);
         matchInProgress = new MatchInProgress(utc, teams);
-        repo.add(BRAZIL, matchInProgress); //Now a different match with the same away team "AUSTRALIA" added
+        repo.add(matchInProgress); //Now a different match with the same away team "AUSTRALIA" added
 
         Assertions.assertNotNull(repo.get(BRAZIL));
         Assertions.assertEquals(AUSTRALIA, repo.get(BRAZIL).getAwayTeam());
@@ -253,21 +235,21 @@ public class FootballWorldcupScoreboardTest {
         teams.put(AWAYTEAM, CANADA);
         MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
         FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
-        repo.add(MEXICO, matchInProgress);
+        repo.add(matchInProgress);
         Thread.sleep(50);
         utc = OffsetDateTime.now(ZoneOffset.UTC);
         teams = new HashMap<>();
         teams.put(HOMETEAM, SPAIN);
         teams.put(AWAYTEAM, BRAZIL);
         matchInProgress = new MatchInProgress(utc, teams);
-        repo.add(SPAIN, matchInProgress);
+        repo.add(matchInProgress);
         Thread.sleep(50);
         utc = OffsetDateTime.now(ZoneOffset.UTC);
         teams = new HashMap<>();
         teams.put(HOMETEAM, GERMANY);
         teams.put(AWAYTEAM, FRANCE);
         matchInProgress = new MatchInProgress(utc, teams);
-        repo.add(GERMANY, matchInProgress);
+        repo.add(matchInProgress);
         List<MatchInProgress> summary = repo.getSummary();
         Assertions.assertEquals(GERMANY, summary.get(0).getHomeTeam());
         Assertions.assertEquals(SPAIN, summary.get(1).getHomeTeam());
@@ -302,7 +284,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(AWAYTEAM, CANADA);
         MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
         FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
-        repo.add(MEXICO, matchInProgress);
+        repo.add(matchInProgress);
 
         Thread.sleep(50);
         utc = OffsetDateTime.now(ZoneOffset.UTC);
@@ -310,7 +292,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(HOMETEAM, SPAIN);
         teams.put(AWAYTEAM, BRAZIL);
         matchInProgress = new MatchInProgress(utc, teams);
-        repo.add(SPAIN, matchInProgress);
+        repo.add(matchInProgress);
 
         Thread.sleep(50);
         utc = OffsetDateTime.now(ZoneOffset.UTC);
@@ -318,7 +300,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(HOMETEAM, GERMANY);
         teams.put(AWAYTEAM, FRANCE);
         matchInProgress = new MatchInProgress(utc, teams);
-        repo.add(GERMANY, matchInProgress);
+        repo.add(matchInProgress);
 
         Thread.sleep(50);
         utc = OffsetDateTime.now(ZoneOffset.UTC);
@@ -326,7 +308,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(HOMETEAM, URUGUAY);
         teams.put(AWAYTEAM, ITALY);
         matchInProgress = new MatchInProgress(utc, teams);
-        repo.add(ITALY, matchInProgress);
+        repo.add(matchInProgress);
 
         Thread.sleep(50);
         utc = OffsetDateTime.now(ZoneOffset.UTC);
@@ -334,7 +316,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(HOMETEAM, ARGENTINA);
         teams.put(AWAYTEAM, AUSTRALIA);
         matchInProgress = new MatchInProgress(utc, teams);
-        repo.add(ARGENTINA, matchInProgress);
+        repo.add(matchInProgress);
 
 
         repo.setScore(MEXICO, 0, 5);
@@ -370,7 +352,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(AWAYTEAM, CANADA);
         MatchInProgress matchInProgress = new MatchInProgress(utc, teams);
         FootballWorldcupScoreboard repo = FootballWorldcupScoreboard.getScoreBoard(new MatchComparator());
-        repo.add(MEXICO, matchInProgress);
+        repo.add(matchInProgress);
 
         Thread.sleep(50);
         utc = OffsetDateTime.now(ZoneOffset.UTC);
@@ -378,7 +360,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(HOMETEAM, SPAIN);
         teams.put(AWAYTEAM, BRAZIL);
         matchInProgress = new MatchInProgress(utc, teams);
-        repo.add(SPAIN, matchInProgress);
+        repo.add(matchInProgress);
 
         Thread.sleep(50);
         utc = OffsetDateTime.now(ZoneOffset.UTC);
@@ -386,7 +368,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(HOMETEAM, GERMANY);
         teams.put(AWAYTEAM, FRANCE);
         matchInProgress = new MatchInProgress(utc, teams);
-        repo.add(GERMANY, matchInProgress);
+        repo.add(matchInProgress);
 
         Thread.sleep(50);
         utc = OffsetDateTime.now(ZoneOffset.UTC);
@@ -394,7 +376,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(HOMETEAM, URUGUAY);
         teams.put(AWAYTEAM, ITALY);
         matchInProgress = new MatchInProgress(utc, teams);
-        repo.add(ITALY, matchInProgress);
+        repo.add(matchInProgress);
 
         Thread.sleep(50);
         utc = OffsetDateTime.now(ZoneOffset.UTC);
@@ -402,7 +384,7 @@ public class FootballWorldcupScoreboardTest {
         teams.put(HOMETEAM, ARGENTINA);
         teams.put(AWAYTEAM, AUSTRALIA);
         matchInProgress = new MatchInProgress(utc, teams);
-        repo.add(ARGENTINA, matchInProgress);
+        repo.add(matchInProgress);
 
         repo.setScore(MEXICO, 0, 5);
         repo.setScore(SPAIN, 10, 2);

@@ -27,7 +27,7 @@ public class FootballWCScoreBoardServiceImpl implements ScoreBoardService {
         teams.put(HOMETEAM, homeTeam);
         teams.put(AWAYTEAM, awayTeam);
         MatchInProgress matchInProgress = new MatchInProgress(time, teams);
-        return scoreBoardDataStore.add(homeTeam, matchInProgress);
+        return scoreBoardDataStore.add(matchInProgress);
     }
 
     @Override
