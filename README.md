@@ -27,7 +27,13 @@ The same team can only play in one ongoing match at a time. For example if a mat
 
 It is assumed that a when a match starts, there may be a fraction of a second delay for it to show up in the scoreboard. But this delay may not be more than 1 min. Because in general a match finished within 90 minutes. If we consider the delay it may not be more than a few seconds.
 
+## Rectification
 
+In the MatchComparator.compare() method MatchInProgress.equals() method could have been used rather than the following
+
+if(o1.getStartTime().equals(o2.getStartTime()) && o1.getHomeTeam().equals(o2.getHomeTeam()) && o1.getAwayTeam().equals(o2.getAwayTeam())) {
+            return 0; //consistent with equals
+        }
 
 ## Data Structures used
 
