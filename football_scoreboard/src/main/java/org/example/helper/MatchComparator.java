@@ -13,8 +13,8 @@ public class MatchComparator implements Comparator<MatchInProgress> {
         int score1 = o1.getHomeTeamScore() + o1.getAwayTeamScore();
         int score2 = o2.getHomeTeamScore() + o2.getAwayTeamScore();
         if(score1 != score2) {
-            return score2 - score1;
+            return score2 - score1;//Descending order
         }
-        return o2.getStartTime().compareTo(o1.getStartTime());
+        return o2.getStartTime().compareTo(o1.getStartTime());//Descending order
     }
 }
