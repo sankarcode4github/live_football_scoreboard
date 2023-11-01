@@ -7,7 +7,7 @@ import java.util.Comparator;
 public class MatchComparator implements Comparator<MatchInProgress> {
     @Override
     public int compare(MatchInProgress o1, MatchInProgress o2) {
-        if(o1.getStartTime().equals(o2.getStartTime()) && o1.getHomeTeam().equals(o2.getHomeTeam()) && o1.getAwayTeam().equals(o2.getAwayTeam())) {
+        if(o1.equals(o2)) {
             return 0; //consistent with equals
         }
         int score1 = o1.getHomeTeamScore() + o1.getAwayTeamScore();
